@@ -19,6 +19,11 @@ namespace KafkaFlow.Consumers
         /// Gets the group id define in the configuration
         /// </summary>
         string GroupId { get; }
+        
+        /// <summary>
+        /// Gets the number of workers define in the configuration
+        /// </summary>
+        int WorkerCount { get; }
 
         /// <summary>
         /// Gets the current topic subscription

@@ -17,7 +17,16 @@ namespace KafkaFlow.Sample.WebApi
                     .AddCluster(
                         cluster => cluster
                             .WithBrokers(new[] { "localhost:9092" })
-                            .EnableAdminMessages("kafka-flow.admin"))
+                            .EnableAdminMessages("kafka-flow.admin", "kafka-flow.admin.group.id")
+                            .AddConsumer(
+                                consumer => consumer
+                                    .Topic("test-topic")
+                                    .WithGroupId("print-console-handler")
+                                    .WithName("consumerName")
+                                    .WithBufferSize(100)
+                                    .WithWorkersCount(20)
+                                    .WithAutoOffsetReset(AutoOffsetReset.Latest)
+                            ))
             );
 
             services

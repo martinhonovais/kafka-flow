@@ -33,11 +33,17 @@ namespace KafkaFlow.Consumers
 
         public string ClientInstanceName => this.consumerManager.Consumer.ClientInstanceName;
 
-        public void Pause(IReadOnlyCollection<TopicPartition> topicPartitions) =>
+        public void Pause(IReadOnlyCollection<TopicPartition> topicPartitions)
+        {
             this.consumerManager.Consumer.FlowManager.Pause(topicPartitions);
+            this.logHandler.Info("Kafka consumer paused", null);
+        }
 
-        public void Resume(IReadOnlyCollection<TopicPartition> topicPartitions) =>
+        public void Resume(IReadOnlyCollection<TopicPartition> topicPartitions)
+        {
             this.consumerManager.Consumer.FlowManager.Resume(topicPartitions);
+            this.logHandler.Info("Kafka consumer resumed", null);
+        }
 
         public Offset GetPosition(TopicPartition topicPartition) =>
             this.consumerManager.Consumer.GetPosition(topicPartition);

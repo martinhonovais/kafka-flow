@@ -3,11 +3,13 @@ namespace KafkaFlow.Admin.WebApi.Controllers
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Adapters;
     using KafkaFlow.Admin.Messages;
+    using KafkaFlow.Admin.Producers;
+    using KafkaFlow.Admin.WebApi.Adapters;
     using KafkaFlow.Admin.WebApi.Contracts;
     using KafkaFlow.Consumers;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Memory;
 
     /// <summary>
     /// Groups controller
@@ -18,18 +20,19 @@ namespace KafkaFlow.Admin.WebApi.Controllers
     {
         private readonly IConsumerAccessor consumers;
         private readonly IAdminProducer adminProducer;
+        private readonly IMemoryCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupsController"/> class.
         /// </summary>
         /// <param name="consumers">The accessor class that provides access to the consumers</param>
         /// <param name="adminProducer">The producer to publish admin messages</param>
-        public GroupsController(
-            IConsumerAccessor consumers,
-            IAdminProducer adminProducer)
+        /// <param name="cache">The cache interface to get metric data</param>
+        public GroupsController(IConsumerAccessor consumers, IAdminProducer adminProducer, IMemoryCache cache)
         {
             this.consumers = consumers;
             this.adminProducer = adminProducer;
+            this.cache = cache;
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace KafkaFlow.Admin.WebApi.Controllers
                         x => new GroupResponse
                         {
                             GroupId = x.First().GroupId,
-                            Consumers = x.Select(y => y.Adapt()),
+                            Consumers = x.Select(y => y.Adapt(this.cache)),
                         }));
         }
 

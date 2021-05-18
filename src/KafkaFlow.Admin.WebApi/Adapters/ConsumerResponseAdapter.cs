@@ -15,7 +15,6 @@ namespace KafkaFlow.Admin.WebApi.Adapters
             var consumerResponse = new ConsumerResponse()
             {
                 Subscription = consumer.Subscription,
-                IsReadonly = consumer.IsReadonly,
                 ConsumerName = consumer.ConsumerName,
                 GroupId = consumer.GroupId,
                 FlowStatus = consumer.FlowStatus ?? ConsumerFlowStatus.NotRunning,
@@ -24,16 +23,19 @@ namespace KafkaFlow.Admin.WebApi.Adapters
                 ClientInstanceName = consumer.ClientInstanceName,
                 IsReadonly = consumer.IsReadonly,
             };
+            var key = $"{consumer.GroupId}-{consumer.ConsumerName}";
+
+            var metricCached = cache.TryGetValue(key, out List<ConsumerMetric> metric);
 
             consumerResponse.PartitionAssignments =
-                cache.TryGetValue($"{consumer.GroupId}-{consumer.ConsumerName}", out List<ConsumerMetric> metric) ?
+                metricCached ?
                     metric.Select(m => m.Adapt()) :
-                    consumer.GetLocalPartitionAssignments();
+                    GetLocalInfo(consumer);
 
             return consumerResponse;
         }
 
-        private static IEnumerable<PartitionAssignment> GetLocalPartitionAssignments(this IMessageConsumer consumer)
+        private static IEnumerable<PartitionAssignment> GetLocalInfo(IMessageConsumer consumer)
         {
             return consumer.PausedPartitions
                 .GroupBy(c => c.Topic)
@@ -42,7 +44,6 @@ namespace KafkaFlow.Admin.WebApi.Adapters
                     Topic = c.Key,
                     HostName = Environment.MachineName,
                     PausedPartitions = c.Select(x => x.Partition.Value).ToList(),
-                    LastUpdate = DateTime.Now,
                 })
                 .Union(consumer.RunningPartitions
                     .GroupBy(c => c.Topic)
@@ -51,7 +52,6 @@ namespace KafkaFlow.Admin.WebApi.Adapters
                         Topic = c.Key,
                         HostName = Environment.MachineName,
                         RunningPartitions = c.Select(x => x.Partition.Value).ToList(),
-                        LastUpdate = DateTime.Now,
                     }));
         }
 
@@ -62,7 +62,6 @@ namespace KafkaFlow.Admin.WebApi.Adapters
                 HostName = consumer.HostName,
                 PausedPartitions = consumer.PausedPartitions,
                 RunningPartitions = consumer.RunningPartitions,
-                LastUpdate = consumer.SentAt,
             };
     }
 }

@@ -1,4 +1,4 @@
-namespace KafkaFlow.Admin
+namespace KafkaFlow.Admin.Producers
 {
     using System.Threading.Tasks;
     using KafkaFlow.Admin.Messages;

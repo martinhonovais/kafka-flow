@@ -1,9 +1,8 @@
-namespace KafkaFlow.Admin
+namespace KafkaFlow.Admin.Producers
 {
     using System;
     using System.Threading.Tasks;
     using KafkaFlow.Admin.Messages;
-    using KafkaFlow.Producers;
 
     internal class AdminProducer : IAdminProducer
     {

@@ -24,6 +24,22 @@ export class ConsumerComponent implements OnInit {
 
   constructor(private modalService: NgbModal, private consumerService: ConsumerService) { }
 
+  removeReadonly(group: any) {
+    return !(group.consumers.length == 1 && group.consumers[0].isReadonly==1);
+  }
+
+  diffFromNowGreaterThan(date: any, diff: number) {
+    return Math.abs((new Date().getTime() - new Date(date).getTime())/1000) > diff;
+  }
+
+  diffFromNowLessThan(date: any, diff: number) {
+    return Math.abs((new Date().getTime() - new Date(date).getTime())/1000) < diff;
+  }
+
+  diffFromNowGreaterThanAndLessThan(date: any, min: number, max: number) {
+    return this.diffFromNowGreaterThan(date, min) && this.diffFromNowLessThan(date, max);
+  }
+
   openWorkersCountModal(groupId: any, consumerName: any, workersCount: number) {
     const modalRef = this.modalService.open(WorkersCountModalComponent);
     modalRef.componentInstance.groupId = groupId;

@@ -14,6 +14,11 @@ namespace KafkaFlow.Admin.WebApi.Contracts
        public string ConsumerName { get; set;}
 
        /// <summary>
+       /// Gets or sets the consumer´s readonly flag
+       /// </summary>
+       public bool IsReadonly { get; set;}
+
+       /// <summary>
        /// Gets or sets the group id
        /// </summary>
        public string GroupId { get; set;}

@@ -35,7 +35,7 @@ namespace KafkaFlow.UnitTests.Consumer
             this.logHandlerMock = new Mock<ILogHandler>(MockBehavior.Strict);
 
             this.consumerMock
-                .Setup(x => x.OnPartitionsAssigned(It.IsAny<Action<IConsumer<byte[], byte[]>, List<TopicPartition>>>()))
+                .Setup(x => x.OnPartitionsAssigned(It.IsAny<Action<IDependencyResolver, IConsumer<byte[], byte[]>, List<TopicPartition>>>()))
                 .Callback((Action<IConsumer<byte[], byte[]>, List<TopicPartition>> value) => this.onPartitionAssignedHandler = value);
 
             this.consumerMock
